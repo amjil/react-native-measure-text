@@ -1,4 +1,4 @@
-package com.reactnativemeasuretext;
+package com.github.amjil.rntextsize;
 
 import androidx.annotation.NonNull;
 

@@ -20,3 +20,14 @@ const MeasureText = NativeModules.MeasureText
 export function multiply(a: number, b: number): Promise<number> {
   return MeasureText.multiply(a, b);
 }
+
+// export default NativeModules.MeasureText;
+//
+
+export function measureChars(specs: Object): Promise<Object> {
+  return MeasureText.measureChars(specs);
+}
+
+export function measure(specs: Object): Promise<Object> {
+  return MeasureText.measure(specs);
+}

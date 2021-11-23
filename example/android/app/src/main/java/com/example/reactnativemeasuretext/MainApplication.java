@@ -10,7 +10,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import com.reactnativemeasuretext.MeasureTextPackage;
+import com.github.amjil.rntextsize.MeasureTextPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
