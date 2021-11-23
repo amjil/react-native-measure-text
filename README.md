@@ -2,6 +2,8 @@
 
 measure text widths
 
+originaliy forked from https://github.com/breeffy/react-native-measure-layout
+
 ## Installation
 
 ```sh
