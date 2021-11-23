@@ -201,7 +201,7 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
       index--;
     }*/
     for (NSUInteger j = 0; j < (index - start); j++) {
-      CRrect boundingRect = [layoutManager boundingRect:lineRange in:textContainer];
+      CRrect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + index, 1) in:textContainer];
       charWidths[j] = boundingRect.size.width;
     }
     NSDictionary *line =   @{
