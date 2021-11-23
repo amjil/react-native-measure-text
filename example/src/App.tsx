@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply, measure, measureChars } from 'react-native-measure-text';
+import { multiply, measure, measureChars } from 'react-native-measure-text-chars';
 
 export default function App() {
   const [result, setResult] = React.useState<Object | undefined>();

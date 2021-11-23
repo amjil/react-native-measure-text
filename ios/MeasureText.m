@@ -138,7 +138,7 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
     [result setValue:@(lastSize.width) forKey:@"lastLineWidth"];
   }
 
-  NSMutableArray<NSNumber *> lineInfo = [self getLineInfo:layoutManager in:textContainer str:text lineNo:lineCount]
+    NSMutableArray<NSNumber *> *lineInfo = [self getLineInfo:layoutManager in:textContainer str:text lineNo:lineCount];
   if (lineInfo) {
     [result setValue:lineInfo forKey:@"lineInfo"];
   }
@@ -173,8 +173,8 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
  * Get extended info for a given line number.
  * @since v2.1.0
  */
-- (NSMutableArray *)getLineInfo:(NSLayoutManager *)layoutManager in:(NSTextContainer)textContainer str:(NSString *)str lineNo:(NSInteger)lineTotal {
-  NSMutableArray<NSNumber *> lineInfo = [[NSMutableArray alloc] initWithCapacity:lineTotal];
+- (NSMutableArray *)getLineInfo:(NSLayoutManager *)layoutManager in:(NSTextContainer *)textContainer str:(NSString *)str lineNo:(NSInteger)lineTotal {
+  NSMutableArray<NSNumber *> *lineInfo = [[NSMutableArray alloc] initWithCapacity:lineTotal];
   CGRect lineRect = CGRectZero;
   NSRange lineRange;
   NSUInteger glyphCount = layoutManager.numberOfGlyphs;
@@ -196,26 +196,27 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
       Get the trimmed range of chars for the glyph range, to be consistent
       w/android, but the width here will include the trailing whitespace.
     */
-    NSMutableArray<NSNumber *> charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
+    NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
     /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
       index--;
     }*/
     for (NSUInteger j = 0; j < (index - start); j++) {
-      CRrect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + index, 1) in:textContainer];
-      charWidths[j] = boundingRect.size.width;
+        CGRect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + j, 1) inTextContainer:textContainer];
+        const CGFloat boundingWidth = boundingRect.size.width;
+        charWidths[j] = @(boundingWidth);
     }
     NSDictionary *line =   @{
                                @"line": @(lineCount),
                                @"start": @(start),
                                @"end": @(index),
                                @"width": @(lineRect.size.width),
-                               @"charWidths": @(charWidths)
+                               @"charWidths": charWidths
                                };
 
     lineInfo[lineCount] = line;
   }
 
-  return nil;
+  return lineInfo;
 }
 
 /**
