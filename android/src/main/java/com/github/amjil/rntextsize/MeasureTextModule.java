@@ -198,50 +198,52 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
       result.putDouble("height", layout.getHeight() / density);
       result.putInt("lineCount", lineCount);
 
-      WritableArray lineInfo = Arguments.createArray();
-      for(int i = 0; i < lineCount; i++){
-        int lineStart = layout.getLineStart(i);
-        int lineEnd = layout.getLineEnd(i);
+      if (conf.getBooleanOrTrue("useCharsWidth")) {
+        WritableArray lineInfo = Arguments.createArray();
+        for(int i = 0; i < lineCount; i++){
+          int lineStart = layout.getLineStart(i);
+          int lineEnd = layout.getLineEnd(i);
 
-        double lineWidth = layout.getLineMax(i) / density;
-        WritableMap line = Arguments.createMap();
+          double lineWidth = layout.getLineMax(i) / density;
+          WritableMap line = Arguments.createMap();
 
-        line.putInt("line", i);
-        line.putInt("start", lineStart);
-        line.putInt("end", lineEnd);
-        line.putDouble("width", lineWidth);
+          line.putInt("line", i);
+          line.putInt("start", lineStart);
+          line.putInt("end", lineEnd);
+          line.putDouble("width", lineWidth);
 
 
-        WritableArray charWidthArray = Arguments.createArray();
-        double currentWidth = 0.0d;
-        for(int j = lineStart; j < lineEnd; j++) {
+          WritableArray charWidthArray = Arguments.createArray();
+          double currentWidth = 0.0d;
+          for(int j = lineStart; j < lineEnd; j++) {
 
-          if (currentWidth < lineWidth) {
-            Path selectPath = new Path();
-            layout.getSelectionPath(j, j + 1, selectPath);
+            if (currentWidth < lineWidth) {
+              Path selectPath = new Path();
+              layout.getSelectionPath(j, j + 1, selectPath);
 
-            RectF selectRect = new RectF();
-            selectPath.computeBounds(selectRect, true);
-            if(textWidth > selectRect.width() / density){
-              charWidthArray.pushDouble(selectRect.width() / density);
+              RectF selectRect = new RectF();
+              selectPath.computeBounds(selectRect, true);
+              if(textWidth > selectRect.width() / density){
+                charWidthArray.pushDouble(selectRect.width() / density);
+              } else {
+                charWidthArray.pushDouble(0);
+              }
+
+              currentWidth += selectRect.width() / density;
             } else {
               charWidthArray.pushDouble(0);
             }
 
-            currentWidth += selectRect.width() / density;
-          } else {
-            charWidthArray.pushDouble(0);
+
           }
+          line.putArray("charWidths", charWidthArray);
 
-
+          lineInfo.pushMap(line);
         }
-        line.putArray("charWidths", charWidthArray);
 
-        lineInfo.pushMap(line);
+
+        result.putArray("lineInfo", lineInfo);
       }
-
-
-      result.putArray("lineInfo", lineInfo);
       promise.resolve(result);
     } catch (Exception e) {
       promise.reject(E_UNKNOWN_ERROR, e);

@@ -196,24 +196,26 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
       Get the trimmed range of chars for the glyph range, to be consistent
       w/android, but the width here will include the trailing whitespace.
     */
-    NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
-    /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
-      index--;
-    }*/
-    for (NSUInteger j = 0; j < (index - start); j++) {
-        CGRect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + j, 1) inTextContainer:textContainer];
-        const CGFloat boundingWidth = boundingRect.size.width;
-        charWidths[j] = @(boundingWidth);
-    }
-    NSDictionary *line =   @{
-                               @"line": @(lineCount),
-                               @"start": @(start),
-                               @"end": @(index),
-                               @"width": @(lineRect.size.width),
-                               @"charWidths": charWidths
-                               };
+    if ([options[@"useCharsWidth"] boolValue]) {
+      NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
+      /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
+        index--;
+      }*/
+      for (NSUInteger j = 0; j < (index - start); j++) {
+          CGRect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + j, 1) inTextContainer:textContainer];
+          const CGFloat boundingWidth = boundingRect.size.width;
+          charWidths[j] = @(boundingWidth);
+      }
+      NSDictionary *line =   @{
+                                 @"line": @(lineCount),
+                                 @"start": @(start),
+                                 @"end": @(index),
+                                 @"width": @(lineRect.size.width),
+                                 @"charWidths": charWidths
+                                 };
 
-    lineInfo[lineCount] = line;
+      lineInfo[lineCount] = line;
+    }
   }
 
   return lineInfo;
