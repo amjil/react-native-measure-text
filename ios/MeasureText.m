@@ -137,11 +137,8 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
                                                                     effectiveRange:nil].size;
         [result setValue:@(lastSize.width) forKey:@"lastLineWidth"];
     }
-    BOOL useCharsWidth = NO;
-    if ([options[@"usePreciseWidth"] boolValue]) {
-        useCharsWidth = YES;
-    }
-    NSMutableArray<NSNumber *> *lineInfo = [self getLineInfo:layoutManager in:textContainer str:text lineNo:lineCount useCharsWidth:useCharsWidth];
+    
+    NSMutableArray<NSNumber *> *lineInfo = [self getLineInfo:layoutManager in:textContainer str:text lineNo:lineCount options:options];
     if (lineInfo) {
         [result setValue:lineInfo forKey:@"lineInfo"];
     }
@@ -176,7 +173,7 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
  * Get extended info for a given line number.
  * @since v2.1.0
  */
-- (NSMutableArray *)getLineInfo:(NSLayoutManager *)layoutManager in:(NSTextContainer *)textContainer str:(NSString *)str lineNo:(NSInteger)lineTotal useCharsWidth:(BOOL)useCharsWidth {
+- (NSMutableArray *)getLineInfo:(NSLayoutManager *)layoutManager in:(NSTextContainer *)textContainer str:(NSString *)str lineNo:(NSInteger)lineTotal options:(NSDictionary * _Nullable)options {
     NSMutableArray<NSNumber *> *lineInfo = [[NSMutableArray alloc] initWithCapacity:lineTotal];
     CGRect lineRect = CGRectZero;
     NSRange lineRange;
@@ -199,8 +196,9 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
          Get the trimmed range of chars for the glyph range, to be consistent
          w/android, but the width here will include the trailing whitespace.
          */
-        if (useCharsWidth == YES) {
-            NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
+        
+        NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
+        if ([options[@"useLineWidth"] boolValue]) {
             /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
              index--;
              }*/
@@ -209,16 +207,17 @@ RCT_EXPORT_METHOD(measure:(NSDictionary * _Nullable)options
                 const CGFloat boundingWidth = boundingRect.size.width;
                 charWidths[j] = @(boundingWidth);
             }
-            NSDictionary *line =   @{
-                @"line": @(lineCount),
-                @"start": @(start),
-                @"end": @(index),
-                @"width": @(lineRect.size.width),
-                @"charWidths": charWidths
-            };
-            
-            lineInfo[lineCount] = line;
         }
+        NSDictionary *line =   @{
+            @"line": @(lineCount),
+            @"start": @(start),
+            @"end": @(index),
+            @"width": @(lineRect.size.width),
+            @"charWidths": charWidths
+        };
+        
+        lineInfo[lineCount] = line;
+        
     }
     
     return lineInfo;
