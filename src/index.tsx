@@ -31,7 +31,3 @@ export function measureChars(specs: Object): Promise<Object> {
 export function measure(specs: Object): Promise<Object> {
   return MeasureText.measure(specs);
 }
-
-export async function asyncMeasure(specs: Object): Promise<Object> {
-  return await MeasureText.measure(specs);
-}
