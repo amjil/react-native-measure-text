@@ -65,7 +65,7 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
   @ReactMethod
   // @ReactMethod(isBlockingSynchronousMethod = true)
   public void measureChars(@Nullable final ReadableMap specs, Promise promise) {
-    final MeasureTextConf conf = getConf(specs, promise, true);
+    final MeasureTextConf conf = getConf(specs, true);
     if (conf == null) {
       return;
     }
@@ -100,15 +100,14 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
   @ReactMethod(isBlockingSynchronousMethod = true)
   // public void measure(@Nullable final ReadableMap specs, Promise promise) {
   public WritableMap measure(@Nullable final ReadableMap specs) {
-    final MeasureTextConf conf = getConf(specs, promise, true);
+    final MeasureTextConf conf = getConf(specs, true);
     if (conf == null) {
-      return;
+      return null;
     }
 
     final String _text = conf.getString("text");
     if (_text == null) {
-      promise.reject(E_MISSING_TEXT, "Missing required text.");
-      return;
+      return null;
     }
 
     final float density = getCurrentDensity();
@@ -121,8 +120,7 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
       result.putDouble("height", minimalHeight(density, includeFontPadding));
       result.putInt("lastLineWidth", 0);
       result.putInt("lineCount", 0);
-      promise.resolve(result);
-      return;
+      return result;
     }
 
     final SpannableString text = (SpannableString) MeasureTextSpannedText
@@ -267,17 +265,16 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
   // ============================================================================
 
   @Nullable
-  private MeasureTextConf getConf(final ReadableMap specs, final Promise promise, boolean forText) {
+  private MeasureTextConf getConf(final ReadableMap specs, boolean forText) {
     if (specs == null) {
-      promise.reject(E_MISSING_PARAMETER, "Missing parameter object.");
       return null;
     }
     return new MeasureTextConf(specs, forText);
   }
 
   @Nullable
-  private MeasureTextConf getConf(final ReadableMap specs, final Promise promise) {
-    return getConf(specs, promise, false);
+  private MeasureTextConf getConf(final ReadableMap specs) {
+    return getConf(specs, false);
   }
 
   /**
