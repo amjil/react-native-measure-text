@@ -28,6 +28,6 @@ export function measureChars(specs: Object): Promise<Object> {
   return MeasureText.measureChars(specs);
 }
 
-export function measure(specs: Object): Promise<Object> {
+export function measure(specs: Object) {
   return MeasureText.measure(specs);
 }

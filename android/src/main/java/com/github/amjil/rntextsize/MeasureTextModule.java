@@ -63,6 +63,7 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
 
   @RequiresApi(api = Build.VERSION_CODES.P)
   @ReactMethod
+  // @ReactMethod(isBlockingSynchronousMethod = true)
   public void measureChars(@Nullable final ReadableMap specs, Promise promise) {
     final MeasureTextConf conf = getConf(specs, promise, true);
     if (conf == null) {
@@ -95,8 +96,10 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
 
   }
 
-  @ReactMethod
-  public void measure(@Nullable final ReadableMap specs, Promise promise) {
+  // @ReactMethod
+  @ReactMethod(isBlockingSynchronousMethod = true)
+  // public void measure(@Nullable final ReadableMap specs, Promise promise) {
+  public WritableMap measure(@Nullable final ReadableMap specs) {
     final MeasureTextConf conf = getConf(specs, promise, true);
     if (conf == null) {
       return;
@@ -244,9 +247,11 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
 
         result.putArray("lineInfo", lineInfo);
       }
-      promise.resolve(result);
+      // promise.resolve(result);
+      return result;
     } catch (Exception e) {
-      promise.reject(E_UNKNOWN_ERROR, e);
+      // promise.reject(E_UNKNOWN_ERROR, e);
+      return null;
     }
   }
 
