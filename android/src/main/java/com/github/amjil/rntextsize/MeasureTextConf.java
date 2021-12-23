@@ -95,7 +95,7 @@ final class MeasureTextConf {
     }
 
     boolean getBooleanOrTrue(@Nonnull final String name) {
-        return !mOpts.hasKey(name) || mOpts.getBoolean(name);
+        return mOpts.hasKey(name) ? mOpts.getBoolean(name) : false;
     }
 
     Integer getIntOrNull(@Nonnull final String name) {

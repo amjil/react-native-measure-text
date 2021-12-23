@@ -199,21 +199,21 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
       result.putDouble("height", layout.getHeight() / density);
       result.putInt("lineCount", lineCount);
 
-      if (conf.getBooleanOrTrue("useCharsWidth")) {
-        WritableArray lineInfo = Arguments.createArray();
-        for(int i = 0; i < lineCount; i++){
-          int lineStart = layout.getLineStart(i);
-          int lineEnd = layout.getLineEnd(i);
+      WritableArray lineInfo = Arguments.createArray();
+      for(int i = 0; i < lineCount; i++){
+        int lineStart = layout.getLineStart(i);
+        int lineEnd = layout.getLineEnd(i);
 
-          double lineWidth = layout.getLineMax(i) / density;
-          WritableMap line = Arguments.createMap();
+        double lineWidth = layout.getLineMax(i) / density;
+        WritableMap line = Arguments.createMap();
 
-          line.putInt("line", i);
-          line.putInt("start", lineStart);
-          line.putInt("end", lineEnd);
-          line.putDouble("width", lineWidth);
+        line.putInt("line", i);
+        line.putInt("start", lineStart);
+        line.putInt("end", lineEnd);
+        line.putDouble("width", lineWidth);
 
 
+        if (conf.getBooleanOrTrue("useCharsWidth")) {
           WritableArray charWidthArray = Arguments.createArray();
           double currentWidth = 0.0d;
           for(int j = lineStart; j < lineEnd; j++) {
@@ -238,13 +238,13 @@ public class MeasureTextModule extends ReactContextBaseJavaModule {
 
           }
           line.putArray("charWidths", charWidthArray);
-
-          lineInfo.pushMap(line);
         }
 
-
-        result.putArray("lineInfo", lineInfo);
+        lineInfo.pushMap(line);
       }
+
+
+      result.putArray("lineInfo", lineInfo);
       // promise.resolve(result);
       return result;
     } catch (Exception e) {

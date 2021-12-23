@@ -197,7 +197,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(measure:(NSDictionary * _Nullable)options
          */
 
         NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
-        if ([options[@"useLineWidth"] boolValue]) {
+        if ([options[@"useCharsWidth"] boolValue]) {
             /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
              index--;
              }*/
