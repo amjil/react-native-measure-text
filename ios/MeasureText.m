@@ -221,7 +221,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(measure:(NSDictionary * _Nullable)options
                 } else {
                     if (glyphNum != 0) {
                         CGFloat glyphRealWidth = glyphWidth / glyphNum;
-                        for (NSUInteger m = j - 1; m > (j - glyphNum); m--) {
+                        for (NSUInteger m = j - 1; m >= (j - glyphNum); m--) {
                             charWidths[m] = @(glyphRealWidth);
                         }
                         glyphNum = 0;
@@ -237,7 +237,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(measure:(NSDictionary * _Nullable)options
 
             if (glyphNum != 0) {
                 CGFloat glyphRealWidth = glyphWidth / glyphNum;
-                for (NSUInteger m = j - 1; m > (j - glyphNum); m--) {
+                for (NSUInteger m = (index - start); m >= ((index - start) - glyphNum); m--) {
                     charWidths[m] = @(glyphRealWidth);
                 }
             }
