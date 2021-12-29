@@ -197,14 +197,49 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(measure:(NSDictionary * _Nullable)options
          */
 
         NSMutableArray<NSNumber *> *charWidths = [[NSMutableArray alloc] initWithCapacity:(index - start)];
+
         if ([options[@"useCharsWidth"] boolValue]) {
             /*while (index > start && [ws characterIsMember:[str characterAtIndex:index - 1]]) {
              index--;
              }*/
+            NSInteger glyphNum = 0;
+            CGFloat glyphWidth = 0.0;
+            CGFloat sumX = 0.0;
             for (NSUInteger j = 0; j < (index - start); j++) {
+
                 CGRect boundingRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(lineRange.location + j, 1) inTextContainer:textContainer];
                 const CGFloat boundingWidth = boundingRect.size.width;
-                charWidths[j] = @(boundingWidth);
+
+                const CGFloat boundingX = boundingRect.origin.x;
+
+                if (sumX != boundingX && glyphWidth == boundingWidth) {
+                    if (glyphNum == 0) {
+                        glyphNum = 2;
+                    } else {
+                        glyphNum += 1;
+                    }
+                } else {
+                    if (glyphNum != 0) {
+                        CGFloat glyphRealWidth = glyphWidth / glyphNum;
+                        for (NSUInteger m = j - 1; m > (j - glyphNum); m--) {
+                            charWidths[m] = @(glyphRealWidth);
+                        }
+                        glyphNum = 0;
+                    }
+                    charWidths[j] = @(boundingWidth);
+
+                    sumX += boundingWidth;
+                    glyphWidth = boundingWidth;
+
+                }
+
+            }
+
+            if (glyphNum != 0) {
+                CGFloat glyphRealWidth = glyphWidth / glyphNum;
+                for (NSUInteger m = j - 1; m > (j - glyphNum); m--) {
+                    charWidths[m] = @(glyphRealWidth);
+                }
             }
         }
         NSDictionary *line =   @{
